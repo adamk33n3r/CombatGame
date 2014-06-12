@@ -4,7 +4,7 @@
     <data-source source="LOCAL" name="Rails CombatGame: development" uuid="439fba47-9c3f-45a1-8cbe-797aba308d6b">
       <driver-ref>sqlite.xerial</driver-ref>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\Adam\RubymineProjects\CombatGame\db\development.sqlite3</jdbc-url>
+      <jdbc-url>jdbc:sqlite:W:\CombatGame\db\development.sqlite3</jdbc-url>
       <libraries />
     </data-source>
   </component>
