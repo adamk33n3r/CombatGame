@@ -4,6 +4,7 @@
   <title>CombatGame<%= " - #{yield(:title)}" if content_for?(:title) %></title>
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0" />
   <%= yield(:head) %>
   <%= csrf_meta_tags %>
 </head>
@@ -34,7 +35,7 @@
 
     <!-- Left Nav Section -->
     <ul class="left">
-      <li><%= link_to "Game", game_path %></li>
+      <li><%= link_to "Game", game_path, data: { no_turbolink: true } %></li>
     </ul>
   </section>
 </nav>

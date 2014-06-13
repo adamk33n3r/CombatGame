@@ -7,6 +7,18 @@
       <jdbc-url>jdbc:sqlite:W:\CombatGame\db\development.sqlite3</jdbc-url>
       <libraries />
     </data-source>
+    <data-source source="LOCAL" name="Rails CombatGame: test" uuid="2d987aea-e21e-4a84-a46c-28cf474f9953">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:W:\CombatGame\db\test.sqlite3</jdbc-url>
+      <libraries />
+    </data-source>
+    <data-source source="LOCAL" name="Rails CombatGame: production" uuid="e00df311-4c38-4e5c-b5a5-248033d0aae5">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:W:\CombatGame\db\production.sqlite3</jdbc-url>
+      <libraries />
+    </data-source>
   </component>
 </project>
 
