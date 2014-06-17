@@ -1,15 +1,16 @@
-define ['game/Player'], (Player) ->
-  AI =
+define ['game/Player', './Class'], (Player, Class) ->
+  AI = Class.extend
     init: (player) ->
       @creator = "Adam"
       @player = player
       @moveRight = true
     act: ->
       @player.jump()
-      @player.punch()
-      @moveRight = false if @player.loc.x > window.innerWidth
-      @moveRight = true if @player.loc.x < 0
+#      @player.punch()
+      @moveRight = false if @player.loc.x >= window.innerWidth
+      @moveRight = true if @player.loc.x <= 0
       if @moveRight
-        @player.move_right()
+        @player.turnRight()
       else
-        @player.move_left()
+        @player.turnLeft()
+      @player.moveForward()

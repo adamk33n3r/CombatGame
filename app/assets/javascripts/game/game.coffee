@@ -13,7 +13,6 @@ define ['game/Player', 'game/AI'], (Player, AI) ->
       @update()
       for player in @players
         player.draw(gfx)
-
       # Draws cursor
       # Log
       gfx.save()
@@ -39,9 +38,47 @@ define ['game/Player', 'game/AI'], (Player, AI) ->
     update: ->
       for player in @players
         player.update()
+      p1 = @players[0]
+      p2 = @players[1]
+#      if p1.loc.x + p1.box.w/2 + p1.arm >= p2.loc.x - p2.box.w/2
+#        # Player one hit player two from the left
+#        console.log "PUAANNCCHHH"
+#        p2.takeDamage(10)
+      if p1.attacking && @check_for_contact()
+        p1.attacking = false
+#        p1.arm = 20 # slows down punches. otherwise if 1 unit away, punch every tick
+        console.log "PUAANNCCHHH"
+        p2.takeDamage(10)
+#        debugger
       for player in @players
+        if player.hp <= 0
+          player.disable()
         player.act()
       return null
+
+    check_for_contact: ->
+      # Arm edge x position:
+      #   arm_x_pos = x + ( our_width_of_body / 2 + arm_dist_from_body ) * direction
+      # Nearest body edge:
+      #   x_diff = our_x - their_x
+      #   TWO METHODS TO FIND SIDE: depends on if we need to account for zero separately
+      #   side = ( x_diff >> 31 ) | ( ( ( ~x_diff + 1 ) >> 31 ) & 1 )
+      #     side =  1 when our_x  > their_x
+      #     side =  0 when our_x == their_x
+      #     side = -1 when our_x  < their_x
+      #   side = ( x_diff >> 31 ) & 1
+      #     side = 1 when our_x < their_x
+      #     side = 0 when our_x >= their_x
+      #   their_closest_edge = their_x + their_width_of_body / 2 * side
+      p1 = @players[0]
+      p2 = @players[1]
+      arm_x_pos = p1.loc.x + ( p1.box.w / 2 + p1.arm ) * p1.direction
+      x_diff = p1.loc.x - p2.loc.x
+      side = ( x_diff >> 31 ) | ( ( ( ~x_diff + 1 ) >> 31 ) & 1 )
+      their_edge = p2.loc.x + ( p2.box.w / 2 * side )
+#      console.log "#{x_diff}:#{side}:#{arm_x_pos}:#{their_edge}"
+      return Math.abs(arm_x_pos - their_edge) < 1
+
 
 #      console.log @player.velocity.x
     onresize: (width, height) ->
@@ -85,6 +122,10 @@ define ['game/Player', 'game/AI'], (Player, AI) ->
       @gfx.canvas.getContext("2d").translate(0, @gfx.canvas.height)
       @gfx.canvas.getContext("2d").scale(1, -1)
 
-      @players = [new Player(1, "Alfred", "red", AI), new Player(2, "Frank", "blue")]
+      player1 = new Player(1, "Frank", "blue")
+      player2 = new Player(2, "Alfred", "red")
+      player1.setUp(null, player2.loc)
+      player2.setUp(AI, player1.loc)
+      @players = [player1, player2]
   console.log "done"
   return game
