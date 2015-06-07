@@ -1,6 +1,0 @@
-run match on server
-clients will just watch what happened.
-
-need to figure out how to prevent randomness in their randomness
-
-DSL
