@@ -1,14 +1,14 @@
 'use strict'
 
-describe 'Service: AI', ->
+describe 'Service: Cursor', ->
 
   # load the service's module
   beforeEach module 'combatGameApp'
 
   # instantiate service
-  AI = undefined
-  beforeEach inject (_AI_) ->
-    AI = _AI_
+  Cursor = undefined
+  beforeEach inject (_Cursor_) ->
+    Cursor = _Cursor_
 
   it 'should do something', ->
-    expect(!!AI).toBe true
+    expect(!!Cursor).toBe true

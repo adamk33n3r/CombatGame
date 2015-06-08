@@ -2,91 +2,103 @@
 
 angular.module 'combatGameApp'
 .service 'Game', class
-  constructor: (@Player, @AI) ->
+  constructor: (@Player, @Cursor, @zip) ->
+    @cursor =
+      pos:
+        x: 0
+        y: 0
+      rotation: 0
+    @cursor =
+    @players = []
+    @ts = 0
+    @lastTime = new Date
+    @frameTime = 0
 
-    @GAMESTATE =
-      cursor:
-        pos:
-          x: 0
-          y: 0
-        rotation: 0
-      players: null
-      create: ->
-        layer = @app.layer
-        layer.canvas.style.cursor = 'none'
-        #layer.context.translate(0, @app.height)
-        #layer.context.scale(1, -1)
-      render: ->
-        layer = @app.layer
+  update: ->
+    thisFrameTime = (thisTime = new Date) - @lastTime
+    @frameTime += (thisFrameTime - @frameTime) / 20
+    @lastTime = thisTime
+    @fps = 1000 // @frameTime
 
-        # Clear screen
-        layer.clear("#000000")
+    @cursor.update()
 
-        @update()
-        #for player in @players
-        #  player.draw(layer)
+    if @ts < @log.length
+      zipped = @zip(@log.players, @players)
+      for item in zipped
+        playerLog = item[0].log[@ts].info
+        playerGFX = item[1]
+        playerGFX.hp = playerLog.health
+        playerGFX.position.x = playerLog.pos.x
+        playerGFX.position.y = playerLog.pos.y
+        # set info of correct player
+      if @ts is 0
+        @ts++
+      else
+        @ts--
 
-        # Draws cursor
-        # Log
-        layer.save()
-          .translate(@cursor.pos.x, @cursor.pos.y)
-          .rotate(-45 * Math.PI / 180)
-          .fillStyle("white")
-          .fillRect(-8,0,16,50)
-          .restore()
-        # Big square
-        layer.save()
-          .translate(@cursor.pos.x,@cursor.pos.y)
-          .rotate(@cursor.rotation)
-          .fillStyle("darkgrey")
-          .fillRect(-30/2, -30/2, 30, 30)
-          .restore()
-        # Small square
-        layer.save()
-          .translate(@cursor.pos.x,@cursor.pos.y)
-          .rotate(-@cursor.rotation)
-          .fillStyle("grey")
-          .fillRect(-16/2, -16/2, 16, 16)
-          .restore()
-      update: ->
+  render: ->
 
-      check_for_contact: ->
-        p1 = @players[0]
-        p2 = @players[1]
-        arm_x_pos = p1.loc.x + ( p1.box.w / 2 + p1.arm ) * p1.direction
-        return arm_x_pos > p2.loc.x - p2.box.w/2 and arm_x_pos < p2.loc.x + p2.box.w/2
+    # Clear screen
+    @gfx.clear()
 
-      mousemove: (pos) ->
-        # save mouse x, y
-        @cursor.pos = pos
-        #@cursor.pos.y = @app.height - pos.y
-        #@cursor.y = @app.height - y
-      touchmove: (x, y) ->
-        # save mouse x, y
-        @cursor.x = x
-        @cursor.y = @app.height - y
-    #    mousedown: (x, y) ->
-    #      @players.push(new Player([x,window.innerHeight - y], "Frank", "blue"))
-      touchstart: (x, y) ->
-        @cursor.x = x
-        @cursor.y = @app.height - y
-    #      @players.push(new Player([x,window.innerHeight - y], "Frank", "blue"))
-      step: (delta) ->
-        @cursor.rotation += 0.05
-      keydown: (key) ->
-        if key is "r"
-          location.reload()
-      keyup: (key) ->
-        console.log()
+    for player in @players
+      player.draw()
 
-  start: ->
-    game = this
+    @cursor.render()
 
-    app = playground
-      smoothing: false
-      container: '#game_area'
-      ready: ->
-        console.log "setting to gamestate"
-        @setState game.GAMESTATE
-    console.log app
+    @gfx.beginFill 0xFFD900
+    @gfx.drawRoundedRect @boxx,@boxy,100,50
+    @gfx.endFill()
+    @gfx.beginFill 0xFFFFFF
+    # @gfx.drawRect @cursor.position.x, @cursor.position.y, 16, 50
+    @gfx.endFill()
+    @renderer.render @stage
 
+  mainLoop: =>
+    @update()
+    @render()
+    requestAnimationFrame @mainLoop
+
+  start: (@log) ->
+    @boxx=350
+    @boxy=350
+    canvas = $('canvas#game')[0]
+    @renderer = PIXI.autoDetectRenderer window.innerWidth, window.innerHeight,
+      view: canvas
+      antialias: true
+    @renderer.backgroundColor = 0xbbbbbb
+
+    @stage = new PIXI.Container()
+    @stage.interactive = true
+
+    @gfx = new PIXI.Graphics()
+    # @gfx.lineStyle 4, 0xFFD900, 1
+    @gfx.beginFill 0x0066CC
+    @gfx.drawRoundedRect 150, 150, 300, 150
+    @gfx.endFill()
+
+    @stage.addChild @gfx
+
+    for playerNum in [1..@log.players.length]
+      playerInfo = @log.players[playerNum-1]
+      gfx = new PIXI.Graphics()
+      @stage.addChild gfx
+      @players.push new @Player playerNum, playerInfo.name, playerInfo.color, gfx
+
+    @fpsText = new PIXI.Text "FPS: ",
+      fill: '#00FF00'
+    @fpsText.x = 30
+    @fpsText.y = 90
+
+    @stage.addChild @fpsText
+
+    # Needs to be last added to stage
+    @cursor = new @Cursor @stage
+
+    document.onmousemove = (e) =>
+      @cursor.setPos e.pageX, e.pageY
+
+    setInterval =>
+      @fpsText.text = "FPS: #{@fps}"
+    , 1000
+    @mainLoop()
