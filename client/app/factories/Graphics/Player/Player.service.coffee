@@ -4,26 +4,8 @@ angular.module 'combatGameApp'
 .factory 'Player', (Part) ->
   class
     constructor: (@name, @color, @stage) ->
-      @position =
-        x: 0
-        y: 0
-      @box =
-        w: 100
-        h: 100
-      @direction = 1
-
-      @arm = 0
-      @hp = 100
-
-      @gfx = new PIXI.Graphics()
-      @stage.addChild @gfx
-      @mask = new PIXI.Graphics()
-      @stage.addChild @mask
-      @gfx.mask = @mask
-      @gfx.position.set @position.x, @position.y
-      @mask.position.set @position.x, @position.y
-
       # TODO: Of course....make these classes...heh
+      # TODO: Should also expiriment with consolodating gfx objects. Things that rotate need new ones, though
       @parts =
         arm: new (class extends Part
           constructor: (stage, @color) ->
@@ -95,13 +77,10 @@ angular.module 'combatGameApp'
             # Eyes
             @gfx.beginFill 0x000000
               .drawRoundedRect -@eyeSize-@eyeSize/2, @eyeHeight, @eyeSize, @eyeSize, 1
-              .endFill()
-            @gfx.beginFill 0x000000
               .drawRoundedRect @eyeSize-@eyeSize/2, @eyeHeight, @eyeSize, @eyeSize, 1
-              .endFill()
             # Mouth
-            @gfx.beginFill 0x000000
               .drawRoundedRect -@mouthSize/2, @mouthHeight, @mouthSize, 20, 1
+              .endFill()
           )(@stage, @color)
         healthbar: new (class extends Part
           constructor: (stage) ->
@@ -136,72 +115,3 @@ angular.module 'combatGameApp'
       for _, part of @parts
         part.update()
         part.render()
-        # Body mask
-        # .beginFill @color
-        # .drawRect @arm-1, -25-1, 50+2, 20+2
-        # .endFill()
-        # .beginFill @color
-        # .drawRoundedRect -@box.w/2-1, -@box.h/2-1, @box.w+2, @box.h+2
-        # .endFill()
-      # @gfx.position.set @position.x, @position.y
-      # @gfx.clear()
-      # @gfx.scale.set @direction, 1
-      # gfx.translate(@position.x, @position.y)
-
-        # HP Bar
-
-        # Body
-        # .beginFill @color
-
-        # Arm
-        # .drawRect @arm, -25, 50, 20
-        # .endFill()
-
-        # Torso
-        # .beginFill @color
-        # .drawRoundedRect -@box.w/2, -@box.h/2, @box.w, @box.h
-        # .endFill()
-    render2: ->
-      @mask.position.set @position.x, @position.y
-      @mask.clear()
-      # Health mask. Should probs just make health a separate gfx obj
-      @mask.beginFill 0xFF0000
-        .drawRoundedRect -@box.w/2-1, -@box.h + 15-1, 102, 22, 9.5
-        .endFill()
-        # # Body mask
-        # .beginFill @color
-        # .drawRect @arm-1, -25-1, 50+2, 20+2
-        # .endFill()
-        # .beginFill @color
-        # .drawRoundedRect -@box.w/2-1, -@box.h/2-1, @box.w+2, @box.h+2
-        # .endFill()
-      @gfx.position.set @position.x, @position.y
-      @gfx.clear()
-      @gfx.scale.set @direction, 1
-      # gfx.translate(@position.x, @position.y)
-      @gfx.lineStyle 2, 0xFFFFFF, 1
-        # Create clip to hold in HP Bar
-        # .save()
-        # .roundRect(-@box.w/2, -@box.h + 15, 100, 20, 10)
-        # .clip()
-
-        # HP Bar
-        .beginFill 0xFF0000
-        .drawRoundedRect -@box.w/2, -@box.h + 15, 100, 20, 9.5
-        .endFill()
-        .beginFill 0x00FF00
-        .drawRoundedRect -@box.w/2, -@box.h + 15, @hp, 20, 9.5
-        .endFill()
-        .drawRoundedRect -@box.w/2, -@box.h + 15, 100, 20, 9.5
-
-        # Body
-        .beginFill @color
-
-        # Arm
-        .drawRect @arm, -25, 50, 20
-        .endFill()
-
-        # Torso
-        .beginFill @color
-        .drawRoundedRect -@box.w/2, -@box.h/2, @box.w, @box.h
-        .endFill()

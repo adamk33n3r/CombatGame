@@ -46,27 +46,18 @@ angular.module 'combatGameApp'
 
     render: ->
 
-      # Clear screen
-      @gfx.clear()
-
       for player in @players
         player.render()
 
       @cursor.render()
 
-      @gfx.beginFill 0xFFD900
-      @gfx.drawRoundedRect @boxx,@boxy,100,50
-      @gfx.endFill()
-      @gfx.beginFill 0xFFFFFF
-      # @gfx.drawRect @cursor.position.x, @cursor.position.y, 16, 50
-      @gfx.endFill()
       @renderer.render @stage
 
     mainLoop: =>
       @update()
       @render()
-      # requestAnimationFrame @mainLoop
-      window.setTimeout @mainLoop, 1
+      requestAnimationFrame @mainLoop
+      # window.setTimeout @mainLoop, 0
 
     setup: ->
       @boxx=350
@@ -75,20 +66,12 @@ angular.module 'combatGameApp'
       @renderer = PIXI.autoDetectRenderer window.innerWidth, window.innerHeight,
         view: canvas
         antialias: true
-      @renderer.backgroundColor = 0xbbbbbb
+      @renderer.backgroundColor = 0xAAAAAA
       $(window).resize =>
         @renderer.resize window.innerWidth, window.innerHeight
 
       @stage = new PIXI.Container()
       @stage.interactive = true
-
-      @gfx = new PIXI.Graphics()
-      # @gfx.lineStyle 4, 0xFFD900, 1
-      @gfx.beginFill 0x0066CC
-      @gfx.drawRoundedRect 150, 150, 300, 150
-      @gfx.endFill()
-
-      @stage.addChild @gfx
 
       for playerNum in [1..@log.players.length]
         playerInfo = @log.players[playerNum-1]
