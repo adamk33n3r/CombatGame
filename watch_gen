@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd ./client/assets/battlelogs
+while true; do
+    change=$(inotifywait -e close_write,moved_to,create .)
+    change=${change#./ * }
+    if [ "$change" = "generate.coffee" ]; then
+        coffee generate.coffee > test.json;
+    fi
+done

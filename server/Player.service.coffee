@@ -45,7 +45,7 @@ angular.module 'combatGameApp'
         console.log "Loading Player 2..."
         @loc.x = window.innerWidth/4
         @loc.y = window.innerHeight/4
-        @direction = -1
+        # @direction = -1
 #        @loc.x = window.innerWidth/4*3
 #        @loc.y = window.innerHeight/4*3
       else
