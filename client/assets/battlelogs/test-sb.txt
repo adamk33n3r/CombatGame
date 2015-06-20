@@ -1,0 +1,129 @@
+fs = require 'fs'
+vm = require 'vm'
+
+class Player
+  constructor: ->
+    @x = 0
+    @y = 200
+    @dx = 0
+    @dy = 0
+    @wait = 0
+    @gravity = 1
+    @drag = .1
+    @jumps = 1
+    @maxJumps = 1
+    @jumpSpeed = 20
+    @speed = 5
+  update: ->
+    if @dx > 0
+      @dx -= @drag
+    else if @dx < 0
+      @dx += @drag
+    @x += @dx
+    @dy -= @gravity
+    @y += @dy
+    if @y < 0
+      @y = 0
+      @dy = 0
+      @jumps = 0
+
+createAPI = (player) ->
+    {
+      api:
+        say: (thing) ->
+          # console.log thing
+        jump: ->
+          # console.log 'jump'
+          return if Math.round(player.y) is not 0
+          if player.jumps < player.maxJumps
+            player.jumps++
+            player.dy = player.jumpSpeed
+        move: (dir) ->
+          # console.log "move #{dir}"
+          dir = dir.toLowerCase()
+          switch dir
+            when 'right'
+              player.dx += if player.dx < player.speed then .5 else 0
+            when 'left'
+              player.dx -= if player.dx > -player.speed then .5 else 0
+        wait: (dur) ->
+          player.wait = dur
+        yell: ->
+          # console.log "YARRGGHHH!!!"
+        sleep: ->
+          # console.log "Honk-Choo"
+        getFunctions: ->
+          # console.log 'getFunctions'
+          [
+            'jump'
+            'move'
+            'wait'
+            'yell'
+            'sleep'
+          ]
+      state:
+        me:
+          x: 0
+          y: 200
+        other:
+          x: 15
+          y: 0
+    }
+
+p1 = new Player
+api1 = createAPI p1
+# console.log "Exposed api: "
+# for func of api1
+#   console.log func
+# console.log p1
+# console.log "jump"
+# api1.jump()
+# console.log p1
+# console.log "Update loop"
+# for i in [0...8]
+#   p1.update()
+#   console.log p1.y, p1.dy, p1.jumps
+# console.log "jump"
+# api1.jump()
+# api1.move 'right'
+# for i in [0...10]
+#   p1.update()
+#   console.log p1
+
+filename = './ai-test.js'
+code = fs.readFileSync filename, 'utf8'
+code = "'use strict';\n" + code
+
+script = new vm.Script code,
+  filename: filename
+
+
+out =
+  date: new Date
+  length: 100
+  players: [
+    name: "Player 1"
+    color: Math.round Math.random()*0xFFFFFF
+    log: [
+    ]
+  ]
+
+createTS = (x, y) ->
+  info:
+    health: 100
+    pos:
+      x: x
+      y: y
+    arm: 0
+    legs:
+      left: 0
+      right: 0
+for i in [0...100]
+  script.runInNewContext api1
+  p1.update()
+  # console.log "p1.x: #{p1.x},\tp1.dx: #{p1.dx}"
+  api1.state.me.x = p1.x
+  api1.state.me.y = p1.y
+  out.players[0].log.push createTS p1.x, p1.y
+
+console.log JSON.stringify out, null, 2

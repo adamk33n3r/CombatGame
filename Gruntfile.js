@@ -34,7 +34,7 @@ module.exports = function (grunt) {
     },
     express: {
       options: {
-        port: process.env.PORT || 80
+        port: process.env.PORT || 3000
       },
       dev: {
         options: {
@@ -98,7 +98,8 @@ module.exports = function (grunt) {
       coffee: {
         files: [
           '<%= yeoman.client %>/{app,components}/**/*.{coffee,litcoffee,coffee.md}',
-          '!<%= yeoman.client %>/{app,components}/**/*.spec.{coffee,litcoffee,coffee.md}'
+          '!<%= yeoman.client %>/{app,components}/**/*.spec.{coffee,litcoffee,coffee.md}',
+          'server/api/**/*.coffee'
         ],
         tasks: ['newer:coffee', 'injector:scripts']
       },
@@ -218,7 +219,7 @@ module.exports = function (grunt) {
         options: {
           nodeArgs: ['--debug-brk'],
           env: {
-            PORT: process.env.PORT || 80
+            PORT: process.env.PORT || 3000
           },
           callback: function (nodemon) {
             nodemon.on('log', function (event) {
@@ -373,6 +374,7 @@ module.exports = function (grunt) {
             'bower_components/**/*',
             'assets/images/{,*/}*.{webp}',
             'assets/fonts/**/*',
+            'assets/battlelogs/*.json',
             'index.html'
           ]
         }, {
@@ -626,7 +628,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'env:all', 'env:prod', 'express:prod', 'wait', 'open', 'express-keepalive']);
+      return grunt.task.run(['build', 'env:all', 'env:prod', 'express:prod', 'wait', /*'open',*/ 'express-keepalive']);
     }
 
     if (target === 'debug') {

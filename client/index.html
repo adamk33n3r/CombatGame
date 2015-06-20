@@ -56,7 +56,7 @@
       <script src="bower_components/angular-socket-io/socket.js"></script>
       <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
       <script src="bower_components/PlaygroundJS/build/playground.js"></script>
-      <script src="bower_components/pixi.js/bin/pixi.js"></script>
+      <script src="bower_components/pixi/bin/pixi.js"></script>
       <!-- endbower -->
       <script src="socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
@@ -65,7 +65,12 @@
         <script src="app/app.js"></script>
           <!-- injector:js -->
           <script src="app/factories/Graphics/Cursor/Cursor.js"></script>
-          <script src="app/factories/Graphics/Part/Part.js"></script>
+          <script src="app/factories/Graphics/Parts/Arm.js"></script>
+          <script src="app/factories/Graphics/Parts/Body.js"></script>
+          <script src="app/factories/Graphics/Parts/Head.js"></script>
+          <script src="app/factories/Graphics/Parts/Healthbar.js"></script>
+          <script src="app/factories/Graphics/Parts/Leg.js"></script>
+          <script src="app/factories/Graphics/Parts/Part.js"></script>
           <script src="app/factories/Graphics/Player/Player.js"></script>
           <script src="app/factories/zip/zip.js"></script>
           <script src="app/routes/account/account.js"></script>
@@ -86,5 +91,10 @@
           <script src="components/socket/socket.service.js"></script>
           <!-- endinjector -->
         <!-- endbuild -->
+      <script src="bower_components/jquery.ui/ui/core.js"></script>
+      <script src="bower_components/jquery.ui/ui/widget.js"></script>
+      <script src="bower_components/jquery.ui/ui/position.js"></script>
+      <script src="bower_components/jquery.ui/ui/mouse.js"></script>
+      <script src="bower_components/jquery.ui/ui/draggable.js"></script>
 </body>
 </html>

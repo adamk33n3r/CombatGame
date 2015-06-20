@@ -21,6 +21,7 @@ gen = (length) ->
           legs:
             left: lleg
             right: rleg
+        say: ""
       if arm == 30
         armDir = -1
       else if arm == 0
@@ -30,7 +31,7 @@ gen = (length) ->
       rleg += -.05 * armDir
     blog.players.push
       name: "p#{i}"
-      color: Math.random()*0xFFFFFF
+      color: Math.round Math.random()*0xFFFFFF
       log: log
   return JSON.stringify(blog, null, 2)
 
